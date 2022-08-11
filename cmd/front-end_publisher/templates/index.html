@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Publisher</title>
+</head>
+<body>
+<h2>It is our publisher to the GCP</h2>
+<form action="/index" method="POST">
+    <label>Name of the topic to publish:</label>
+    <input type="text" name="topic" value="{{ .topic }}" readonly="readonly" required="required">
+    <label>Input category ID</label>
+    <input type="text" name="CategoryID" required="required">
+    <label>Input product ID</label>
+    <input type="text" name="ProductID" required="required">
+    <label>Input action ID</label>
+    <input type="text" name="ActionID" required="required">
+    <button type="submit">Send</button>
+</form>
+</body>
+</html>
