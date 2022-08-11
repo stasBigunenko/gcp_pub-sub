@@ -12,16 +12,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func init() {
-	os.Setenv("GOOGLE_APPLICATION_CREDENTIALS", "../../pub-sub-359008-ff94c59da4aa.json")
-}
-
 func main() {
 	cfg := config.Set()
 
 	r := gin.Default()
-	handler := handler.New(cfg)
-	router := handler.Routes(r)
+	h := handler.New(cfg)
+	router := h.Routes(r)
 
 	srv := http.Server{
 		Addr:    cfg.Port,

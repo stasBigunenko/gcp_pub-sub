@@ -10,7 +10,12 @@ import (
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+	"os"
 )
+
+func init() {
+	os.Setenv("GOOGLE_APPLICATION_CREDENTIALS", "C:\\goProjects\\src\\Intern\\gcp_pub-sub\\pub-sub-359008-ff94c59da4aa.json")
+}
 
 type Handler struct {
 	Config *config.Config
@@ -25,7 +30,7 @@ func New(cfg *config.Config) *Handler {
 func (h *Handler) Routes(r *gin.Engine) *gin.Engine {
 	r.LoadHTMLGlob("./cmd/front-end_publisher/templates/*.html")
 	r.GET("/index", h.Index)
-	r.POST("/index", h.SendData)
+	r.POST("/send", h.SendData)
 
 	return r
 }
@@ -62,7 +67,7 @@ func (h *Handler) SendData(c *gin.Context) {
 		return
 	}
 
-	c.Redirect(200, "/index")
+	c.Redirect(301, "/index")
 }
 
 func publish(client *pubsub.Client, topicID string, msg []byte) error {

@@ -8,8 +8,6 @@ type Config struct {
 	TopicID   string
 }
 
-const Topic = "user_activity"
-
 func Set() *Config {
 	var config Config
 
