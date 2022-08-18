@@ -8,7 +8,7 @@ type Config struct {
 	TopicID   string
 }
 
-func Set() *Config {
+func Set() (*Config, error) {
 	var config Config
 
 	config.Port = os.Getenv("PORT")
@@ -27,8 +27,9 @@ func Set() *Config {
 	}
 
 	return &Config{
-		Port:      config.Port,
-		ProjectID: config.ProjectID,
-		TopicID:   config.TopicID,
-	}
+			Port:      config.Port,
+			ProjectID: config.ProjectID,
+			TopicID:   config.TopicID,
+		},
+		nil
 }
