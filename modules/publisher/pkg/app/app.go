@@ -26,6 +26,6 @@ func Create() (*Application, error) {
 }
 
 func (app *Application) Run(ctx context.Context) error {
-	router.New(app.Configuration, event.New(app.Configuration)).RunServer(ctx)
+	router.New(&app.Configuration.HTTPServer, event.New(&app.Configuration.EventData)).RunServer(ctx)
 	return nil
 }
