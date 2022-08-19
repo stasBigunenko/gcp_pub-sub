@@ -2,34 +2,48 @@ package config
 
 import "os"
 
-type Config struct {
-	Port      string
-	ProjectID string
-	TopicID   string
-}
+type (
+	Config struct {
+		HTTPServer HTTPServerConfig
+		EventData  EventDataConfig
+	}
+
+	HTTPServerConfig struct {
+		HTTPServerPort string
+	}
+
+	EventDataConfig struct {
+		ProjectID string
+		TopicID   string
+	}
+)
 
 func Set() (*Config, error) {
-	var config Config
-
-	config.Port = os.Getenv("PORT")
-	if config.Port == "" {
-		config.Port = ":8080"
+	httpServerPort := os.Getenv("PORT")
+	if httpServerPort == "" {
+		httpServerPort = ":8080"
 	}
 
-	config.ProjectID = os.Getenv("PROJECT_ID")
-	if config.ProjectID == "" {
-		config.ProjectID = "pub-sub-359008"
+	httpServer := HTTPServerConfig{HTTPServerPort: httpServerPort}
+
+	projectID := os.Getenv("PROJECT_ID")
+	if projectID == "" {
+		projectID = "pub-sub-359008"
 	}
 
-	config.TopicID = os.Getenv("TOPIC_ID")
-	if config.TopicID == "" {
-		config.TopicID = "my-topic"
+	topicID := os.Getenv("TOPIC_ID")
+	if topicID == "" {
+		topicID = "my-topic"
+	}
+
+	eventData := EventDataConfig{
+		ProjectID: projectID,
+		TopicID:   topicID,
 	}
 
 	return &Config{
-			Port:      config.Port,
-			ProjectID: config.ProjectID,
-			TopicID:   config.TopicID,
+			HTTPServer: httpServer,
+			EventData:  eventData,
 		},
 		nil
 }
