@@ -1,10 +1,12 @@
-module Intern/gcp_pub-sub/modules/publisher
+module Intern/gcp_pub-sub/modules/subscriber
 
 go 1.19
 
 require (
 	cloud.google.com/go/pubsub v1.24.0
 	github.com/gin-gonic/gin v1.8.1
+	github.com/google/uuid v1.3.0
+	github.com/lib/pq v1.10.6
 )
 
 require (

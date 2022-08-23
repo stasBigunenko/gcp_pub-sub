@@ -1,11 +1,11 @@
 package event
 
 import (
+	"Intern/gcp_pub-sub/modules/publisher/pkg/app/config"
 	"cloud.google.com/go/pubsub"
 	"context"
 	"encoding/json"
 	"fmt"
-	"gcp_pub-sub/modules/publisher/pkg/app/config"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -13,7 +13,7 @@ import (
 )
 
 func init() {
-	os.Setenv("GOOGLE_APPLICATION_CREDENTIALS", "C:\\goProjects\\src\\Intern\\gcp_pub-sub\\pub-sub-359008-ff94c59da4aa.json")
+	os.Setenv("GOOGLE_APPLICATION_CREDENTIALS", "./pub-sub-359008-ff94c59da4aa.json")
 }
 
 type Event struct {

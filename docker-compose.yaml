@@ -1,0 +1,48 @@
+version: "3.1"
+
+services:
+  publisher:
+    container_name: "publisher"
+    build:
+      context: "."
+      dockerfile: "./modules/publisher/publisher.Dockerfile"
+    ports:
+      - "8080:8080"
+    environment:
+      PORT: ":8080"
+      PROJECT_ID: "pub-sub-359008"
+      TOPIC_ID: "my-topic"
+#    depends_on:
+#      - subscriber
+
+  subscriber:
+    container_name: "subscriber"
+    build:
+      context: "."
+      dockerfile: "./modules/subscriber/subscriber.Dockerfile"
+    ports:
+      - "8081:8081"
+    environment:
+      PORT: ":8081"
+      PROJECT_ID: "pub-sub-359008"
+      TOPIC_ID: "my-topic"
+      HOST_DB: "postgres"
+      PORT_DB: "5432"
+      USER_DB: "pub-sub"
+      PSW_DB: "qwerty"
+      NAME_DB: "pub-sub"
+      SSLDB: "disable"
+
+  postgres:
+    container_name: "postgres"
+    image: postgres:latest
+    restart: always
+    user: "postgres"
+    environment:
+      POSTGRES_USER: "pub-sub"
+      POSTGRES_PASSWORD: "qwerty"
+      POSTGRES_DATABASE: "pub-sub"
+    #    volumes:
+    #      - ./storage/postgres/database.sql:/docker-entrypoint-initdb.d/database.sql
+    ports:
+      - "5432:5432"

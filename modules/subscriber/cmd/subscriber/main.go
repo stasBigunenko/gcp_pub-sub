@@ -1,7 +1,7 @@
 package main
 
 import (
-	"Intern/gcp_pub-sub/modules/publisher/pkg/app"
+	"Intern/gcp_pub-sub/modules/subscriber/pkg/app"
 	"context"
 	"log"
 	"os"

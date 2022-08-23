@@ -1,10 +1,10 @@
 package app
 
 import (
+	"Intern/gcp_pub-sub/modules/publisher/pkg/app/config"
+	"Intern/gcp_pub-sub/modules/publisher/pkg/app/router"
+	"Intern/gcp_pub-sub/modules/publisher/pkg/handler/event"
 	"context"
-	"gcp_pub-sub/modules/publisher/pkg/app/config"
-	"gcp_pub-sub/modules/publisher/pkg/app/router"
-	"gcp_pub-sub/modules/publisher/pkg/handler/event"
 	"log"
 	"os"
 )
