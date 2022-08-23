@@ -11,14 +11,14 @@ import (
 )
 
 type Router struct {
-	config  *config.Config
-	handler handler.Handler
+	httpServerPort *config.HTTPServerConfig
+	handler        handler.Handler
 }
 
-func New(cfg *config.Config, event handler.Handler) *Router {
+func New(port *config.HTTPServerConfig, event handler.Handler) *Router {
 	return &Router{
-		config:  cfg,
-		handler: event,
+		httpServerPort: port,
+		handler:        event,
 	}
 }
 
@@ -27,7 +27,7 @@ func (r *Router) RunServer(ctx context.Context) {
 	r.assignRoutes(engine)
 
 	srv := &http.Server{
-		Addr:    r.config.Port,
+		Addr:    r.httpServerPort.HTTPServerPort,
 		Handler: engine,
 	}
 

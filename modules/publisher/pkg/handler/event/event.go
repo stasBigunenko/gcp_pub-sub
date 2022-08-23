@@ -17,7 +17,7 @@ func init() {
 }
 
 type Event struct {
-	config *config.Config
+	eventDataConfig *config.EventDataConfig
 }
 
 type message struct {
@@ -25,15 +25,15 @@ type message struct {
 	ActionID  string `json:"actionID"`
 }
 
-func New(cfg *config.Config) *Event {
+func New(event *config.EventDataConfig) *Event {
 	return &Event{
-		config: cfg,
+		eventDataConfig: event,
 	}
 }
 
 func (e *Event) Index(c *gin.Context) {
 	c.HTML(http.StatusOK, "index.html", gin.H{
-		"topic": e.config.TopicID,
+		"topic": e.eventDataConfig.TopicID,
 	})
 }
 
@@ -51,13 +51,13 @@ func (e *Event) SendData(c *gin.Context) {
 
 	ctx := context.Background()
 
-	client, err := pubsub.NewClient(ctx, e.config.ProjectID)
+	client, err := pubsub.NewClient(ctx, e.eventDataConfig.ProjectID)
 	if err != nil {
 		c.Error(fmt.Errorf("Could not create pubsub Client: %v", err))
 		return
 	}
 
-	if err = publish(client, e.config.TopicID, data); err != nil {
+	if err = publish(client, e.eventDataConfig.TopicID, data); err != nil {
 		c.Error(fmt.Errorf("Failed to publish: %v", err))
 		return
 	}
