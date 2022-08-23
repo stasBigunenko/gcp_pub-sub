@@ -1,8 +1,8 @@
 package router
 
 import (
-	"Intern/gcp_pub-sub/modules/publisher/pkg/app/config"
-	"Intern/gcp_pub-sub/modules/publisher/pkg/handler"
+	"Intern/gcp_pub-sub/modules/subscriber/handler"
+	"Intern/gcp_pub-sub/modules/subscriber/pkg/app/config"
 	"context"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -11,14 +11,14 @@ import (
 )
 
 type Router struct {
-	config  *config.Config
-	handler handler.Handler
+	serverPort *config.HTTPServerConfiguration
+	handler    handler.Handler
 }
 
-func New(cfg *config.Config, event handler.Handler) *Router {
+func New(httpPort *config.HTTPServerConfiguration, event handler.Handler) *Router {
 	return &Router{
-		config:  cfg,
-		handler: event,
+		serverPort: httpPort,
+		handler:    event,
 	}
 }
 
@@ -27,7 +27,7 @@ func (r *Router) RunServer(ctx context.Context) {
 	r.assignRoutes(engine)
 
 	srv := &http.Server{
-		Addr:    r.config.Port,
+		Addr:    r.serverPort.HTTPPort,
 		Handler: engine,
 	}
 
@@ -52,7 +52,5 @@ func (r *Router) RunServer(ctx context.Context) {
 }
 
 func (r *Router) assignRoutes(engine *gin.Engine) {
-	engine.LoadHTMLGlob("./pkg/templates/index.html")
-	engine.GET("/index", r.handler.Index)
-	engine.POST("/send", r.handler.SendData)
+	//engine.GET("/index", r.handler.PullMessage)
 }
