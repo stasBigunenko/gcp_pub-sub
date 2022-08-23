@@ -8,6 +8,6 @@ COPY ./modules/publisher/go.sum ./
 RUN go mod download
 
 # Copy the code into the container
-COPY ./modules/publisher .
+COPY ./modules/publisher ./
 
 ENTRYPOINT ["go", "run", "./cmd/front-end_publisher/main.go"]
