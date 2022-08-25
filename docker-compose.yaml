@@ -32,6 +32,7 @@ services:
       PSW_DB: "qwerty"
       NAME_DB: "pub-sub"
       SSLDB: "disable"
+    restart: on-failure
 
   postgres:
     container_name: "postgres"
