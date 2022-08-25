@@ -12,8 +12,6 @@ services:
       PORT: ":8080"
       PROJECT_ID: "pub-sub-359008"
       TOPIC_ID: "my-topic"
-#    depends_on:
-#      - subscriber
 
   subscriber:
     container_name: "subscriber"
@@ -43,7 +41,5 @@ services:
       POSTGRES_USER: "pub-sub"
       POSTGRES_PASSWORD: "qwerty"
       POSTGRES_DATABASE: "pub-sub"
-    #    volumes:
-    #      - ./storage/postgres/database.sql:/docker-entrypoint-initdb.d/database.sql
     ports:
       - "5432:5432"
