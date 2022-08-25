@@ -49,7 +49,9 @@ func New(connStr *config.StorageConfiguration) (*PostgresDB, error) {
     					id CHAR(36) PRIMARY KEY NOT NULL, 
     					action_id CHAR(36) NOT NULL,
     					product_id CHAR(36) NOT NULL,
-    					created_at TIMESTAMP                           
+    					created_at TIMESTAMP,
+    					FOREIGN KEY (action_id) REFERENCES actions(id),
+    					FOREIGN KEY (product_id) REFERENCES products(id)                           
     				);`)
 
 	return database, nil
