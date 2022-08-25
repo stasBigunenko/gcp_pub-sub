@@ -52,7 +52,7 @@ func (r *Router) RunServer(ctx context.Context) {
 }
 
 func (r *Router) assignRoutes(engine *gin.Engine) {
-	engine.LoadHTMLGlob("./templates/index.html")
+	engine.LoadHTMLGlob("../../templates/index.html")
 	engine.GET("/index", r.handler.Index)
 	engine.POST("/send", r.handler.SendData)
 }
