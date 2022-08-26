@@ -48,10 +48,10 @@ func New(connStr *config.StorageConfiguration) (*PostgresDB, error) {
 	database.Pdb.Exec(`CREATE TABLE user_activities (
     					id CHAR(36) PRIMARY KEY NOT NULL, 
     					action_id CHAR(36) NOT NULL,
-    					product_id CHAR(36) NOT NULL,
+    					product_id CHAR(36),
     					created_at TIMESTAMP,
-    					FOREIGN KEY (action_id) REFERENCES actions(id),
-    					FOREIGN KEY (product_id) REFERENCES products(id)                           
+    					FOREIGN KEY (action_id) REFERENCES actions(id) ON DELETE CASCADE ON UPDATE CASCADE ,
+    					FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE ON UPDATE CASCADE                           
     				);`)
 
 	return database, nil

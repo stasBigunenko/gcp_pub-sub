@@ -52,5 +52,5 @@ func (r *Router) RunServer(ctx context.Context) {
 }
 
 func (r *Router) assignRoutes(engine *gin.Engine) {
-	//engine.GET("/index", r.handler.PullMessage)
+	engine.GET("/bucket", r.handler.ProductsInBucket)
 }
