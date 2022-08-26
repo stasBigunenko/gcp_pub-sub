@@ -56,3 +56,31 @@ func (r *Repository) ShowAllActions() ([]model.Action, error) {
 
 	return actions, nil
 }
+
+func (r *Repository) InBucketsWithInterval(actionID, fromDate, toDate string) ([]model.DBResponse, error) {
+	var results []model.DBResponse
+
+	rows, err := r.db.Query(
+		`SELECT products.*, user_activities.action_id, user_activities.created_at FROM products JOIN user_activities on (
+    	user_activities.action_id=$1 AND 
+    	user_activities.product_id=products.id) WHERE 
+    	user_activities.created_at between $2 and $3;`,
+		actionID, fromDate, toDate)
+	if err != nil {
+		return []model.DBResponse{}, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		res := model.DBResponse{}
+
+		err = rows.Scan(&res.ProductID, &res.Name, &res.Description, &res.Price, &res.Category, &res.ActionID, &res.CreatedAt)
+		if err != nil {
+			return []model.DBResponse{}, err
+		}
+
+		results = append(results, res)
+	}
+
+	return results, nil
+}

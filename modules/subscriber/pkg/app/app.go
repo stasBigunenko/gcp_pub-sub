@@ -6,8 +6,9 @@ import (
 	"Intern/gcp_pub-sub/modules/subscriber/pkg/app/router"
 	"Intern/gcp_pub-sub/modules/subscriber/pkg/app/storage/postgresql"
 	"Intern/gcp_pub-sub/modules/subscriber/pkg/app/worker"
-	product2 "Intern/gcp_pub-sub/modules/subscriber/repo/product"
+	repo "Intern/gcp_pub-sub/modules/subscriber/repo/product"
 	"Intern/gcp_pub-sub/modules/subscriber/service"
+	serv "Intern/gcp_pub-sub/modules/subscriber/service/product"
 	"context"
 	"log"
 	"os"
@@ -36,9 +37,9 @@ func Create() (*Application, error) {
 		log.Fatalf("error adding data to db: %w\n", err)
 	}
 
-	repo := product2.New(storage.Pdb)
+	repo := repo.New(storage.Pdb)
 
-	service := product.New(&repo)
+	service := serv.New(repo)
 
 	worker := worker.New(repo, &cfg.PubSubData)
 
@@ -52,6 +53,6 @@ func Create() (*Application, error) {
 func (app *Application) Run(ctx context.Context) error {
 	app.Worker.Run(ctx)
 
-	router.New(&app.Configuration.HTTPServerPort, product.New(&app.Service)).RunServer(ctx)
+	router.New(&app.Configuration.HTTPServerPort, product.New(app.Service)).RunServer(ctx)
 	return nil
 }
