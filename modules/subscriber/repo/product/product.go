@@ -31,33 +31,7 @@ func (r *Repository) AddAction(actionId, productId string) error {
 	return nil
 }
 
-func (r *Repository) ShowAllActions() ([]model.Action, error) {
-	r.mu.Lock()
-	defer r.mu.Unlock()
-
-	rows, err := r.db.Query(
-		`SELECT * FROM user_activities`)
-	if err != nil {
-		return []model.Action{}, fmt.Errorf("internal error: %v\n", err)
-	}
-	defer rows.Close()
-
-	actions := []model.Action{}
-
-	for rows.Next() {
-		action := model.Action{}
-		err = rows.Scan(&action.ID, &action.ActionID, &action.ProductID, &action.CreatedAt)
-		if err != nil {
-			return []model.Action{}, fmt.Errorf("internal error: %v\n", err)
-		}
-
-		actions = append(actions, action)
-	}
-
-	return actions, nil
-}
-
-func (r *Repository) InBucketsWithInterval(actionID, fromDate, toDate string) ([]model.DBResponse, error) {
+func (r *Repository) ActionWithInterval(actionID, fromDate, toDate string) ([]model.DBResponse, error) {
 	var results []model.DBResponse
 
 	rows, err := r.db.Query(
@@ -75,6 +49,35 @@ func (r *Repository) InBucketsWithInterval(actionID, fromDate, toDate string) ([
 		res := model.DBResponse{}
 
 		err = rows.Scan(&res.ProductID, &res.Name, &res.Description, &res.Price, &res.Category, &res.ActionID, &res.CreatedAt)
+		if err != nil {
+			return []model.DBResponse{}, err
+		}
+
+		results = append(results, res)
+	}
+
+	return results, nil
+}
+
+func (r *Repository) TwoActionsWithInterval(actionID, actionID2, fromDate, toDate string) ([]model.DBResponse, error) {
+	var results []model.DBResponse
+
+	rows, err := r.db.Query(
+		`SELECT products.* FROM products JOIN user_activities on (
+    	(user_activities.action_id=$1 OR
+    	user_activities.action_id=$2) AND
+    	user_activities.product_id=products.id) WHERE 
+    	user_activities.created_at between $3 and $4 GROUP BY products.id;`,
+		actionID, actionID2, fromDate, toDate)
+	if err != nil {
+		return []model.DBResponse{}, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		res := model.DBResponse{}
+
+		err = rows.Scan(&res.ProductID, &res.Name, &res.Description, &res.Price, &res.Category, &res.CreatedAt)
 		if err != nil {
 			return []model.DBResponse{}, err
 		}
