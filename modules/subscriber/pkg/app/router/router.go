@@ -53,4 +53,7 @@ func (r *Router) RunServer(ctx context.Context) {
 
 func (r *Router) assignRoutes(engine *gin.Engine) {
 	engine.GET("/bucket", r.handler.ProductsInBucket)
+	engine.GET("/outofbucket", r.handler.ProductsOutFromBucket)
+	engine.GET("/description", r.handler.ProductsDescription)
+	engine.GET("/descriptionandbucket", r.handler.ProductsBucketAndDescription)
 }

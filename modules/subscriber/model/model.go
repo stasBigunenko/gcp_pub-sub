@@ -26,6 +26,7 @@ type DBResponse struct {
 
 type InputWithDate struct {
 	ActionID      string `json:"actionID"`
+	ActionID2     string `json:"actionID2"`
 	ToDateYear    string `json:"toDateYear"`
 	ToDateMonth   string `json:"toDateMonth"`
 	ToDateDay     string `json:"toDateDay"`

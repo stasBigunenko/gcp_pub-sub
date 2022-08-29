@@ -22,10 +22,10 @@ func New(connStr *config.StorageConfiguration) (*PostgresDB, error) {
 
 	database := &PostgresDB{Pdb: db}
 
-	database.Pdb.Exec(`DROP TABLE products`)
-	database.Pdb.Exec(`DROP TABLE categories`)
-	database.Pdb.Exec(`DROP TABLE actions`)
-	database.Pdb.Exec(`DROP TABLE user_activities`)
+	database.Pdb.Exec(`DROP TABLE products;`)
+	database.Pdb.Exec(`DROP TABLE categories;`)
+	database.Pdb.Exec(`DROP TABLE actions;`)
+	database.Pdb.Exec(`DROP TABLE user_activities CASCADE CONSTRAINTS;`)
 
 	database.Pdb.Exec(`CREATE TABLE products (
     					id CHAR(36) PRIMARY KEY NOT NULL, 
