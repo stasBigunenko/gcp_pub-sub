@@ -76,7 +76,7 @@ func (p *Product) ProductsBucketAndDescription(c *gin.Context) {
 		return
 	}
 
-	products, err := p.service.ActionIDWithInterval(input)
+	products, err := p.service.TwoActionsIDWithInterval(input)
 	if err != nil {
 		c.Error(err)
 		return

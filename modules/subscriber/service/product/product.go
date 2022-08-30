@@ -46,15 +46,15 @@ func (s *ServiceProduct) ActionIDWithInterval(input model.InputWithDate) ([]mode
 	return result, nil
 }
 
-func (s *ServiceProduct) TwoActionsIDWithInterval(input model.InputWithDate) ([]model.DBResponse, error) {
+func (s *ServiceProduct) TwoActionsIDWithInterval(input model.InputWithDate) ([]model.DBResponse2Actions, error) {
 	fromDate, toDate, err := checkDate(input)
 	if err != nil {
-		return []model.DBResponse{}, err
+		return []model.DBResponse2Actions{}, err
 	}
 
 	result, err := s.repo.TwoActionsWithInterval(input.ActionID, input.ActionID2, fromDate, toDate)
 	if err != nil {
-		return []model.DBResponse{}, err
+		return []model.DBResponse2Actions{}, err
 	}
 
 	return result, nil

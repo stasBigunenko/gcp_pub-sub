@@ -22,10 +22,10 @@ func New(connStr *config.StorageConfiguration) (*PostgresDB, error) {
 
 	database := &PostgresDB{Pdb: db}
 
+	database.Pdb.Exec(`DROP TABLE user_activities;`)
 	database.Pdb.Exec(`DROP TABLE products;`)
 	database.Pdb.Exec(`DROP TABLE categories;`)
 	database.Pdb.Exec(`DROP TABLE actions;`)
-	database.Pdb.Exec(`DROP TABLE user_activities CASCADE CONSTRAINTS;`)
 
 	database.Pdb.Exec(`CREATE TABLE products (
     					id CHAR(36) PRIMARY KEY NOT NULL, 
@@ -50,7 +50,7 @@ func New(connStr *config.StorageConfiguration) (*PostgresDB, error) {
     					action_id CHAR(36) NOT NULL,
     					product_id CHAR(36),
     					created_at TIMESTAMP,
-    					FOREIGN KEY (action_id) REFERENCES actions(id) ON DELETE CASCADE ON UPDATE CASCADE ,
+    					FOREIGN KEY (action_id) REFERENCES actions(id) ON DELETE CASCADE ON UPDATE CASCADE,
     					FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE ON UPDATE CASCADE                           
     				);`)
 
