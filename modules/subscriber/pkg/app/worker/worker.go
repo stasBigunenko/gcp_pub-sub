@@ -14,16 +14,19 @@ import (
 	"time"
 )
 
+// Worker is the object that define entity which works with Google API and Miroservice API
 type Worker struct {
 	client       *pubsub.Client
 	repo         repo.ProductsRepo
 	pubSubConfig *config.PubSubConfiguration
 }
 
+// init initialize Goggle app environment variable
 func init() {
 	os.Setenv("GOOGLE_APPLICATION_CREDENTIALS", "./pub-sub-359008-ff94c59da4aa.json")
 }
 
+// New is the contructor of the Worker entity
 func New(r repo.ProductsRepo, c *config.PubSubConfiguration) *Worker {
 	ctx := context.Background()
 
@@ -48,6 +51,7 @@ func New(r repo.ProductsRepo, c *config.PubSubConfiguration) *Worker {
 	}
 }
 
+// Run makes our worker work
 func (w *Worker) Run(ctx context.Context) error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -68,10 +72,12 @@ func (w *Worker) Run(ctx context.Context) error {
 	return nil
 }
 
+// GetCLient return pub-sub client connection
 func (w *Worker) GetClient() *pubsub.Client {
 	return w.client
 }
 
+// PullMsgs pull messages from Google Pub-Sub
 func (w *Worker) pullMsgs(client *pubsub.Client, name string) error {
 	ctx := context.Background()
 
@@ -104,6 +110,7 @@ func (w *Worker) pullMsgs(client *pubsub.Client, name string) error {
 	return nil
 }
 
+// Create subscription in the Google Pub-Sub
 func create(client *pubsub.Client, name string, topic *pubsub.Topic) error {
 	ctx := context.Background()
 
@@ -120,6 +127,7 @@ func create(client *pubsub.Client, name string, topic *pubsub.Topic) error {
 	return nil
 }
 
+// CreateTopicIfNotExists creates topic in the Google Pub-Sub
 func createTopicIfNotExists(c *pubsub.Client, topic string) *pubsub.Topic {
 	ctx := context.Background()
 	t := c.Topic(topic)

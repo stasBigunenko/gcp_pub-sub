@@ -9,15 +9,18 @@ import (
 	"time"
 )
 
+// Repository is object that define storage business logic layer
 type Repository struct {
 	db *sql.DB
 	mu sync.Mutex
 }
 
+// New is the constructor of the Repository entity
 func New(db *sql.DB) *Repository {
 	return &Repository{db: db}
 }
 
+// Addaction insert in the db action that makes user
 func (r *Repository) AddAction(actionId, productId string) error {
 	id := uuid.New().String()
 	createdAt := time.Now()
@@ -31,6 +34,7 @@ func (r *Repository) AddAction(actionId, productId string) error {
 	return nil
 }
 
+// ActionWithInterval select from db data according the actionID between interval of dates
 func (r *Repository) ActionWithInterval(actionID, fromDate, toDate string) ([]model.DBResponse, error) {
 	var results []model.DBResponse
 
@@ -59,6 +63,7 @@ func (r *Repository) ActionWithInterval(actionID, fromDate, toDate string) ([]mo
 	return results, nil
 }
 
+// TwoActionsWithInterval select from db data according the two actions between interval of dates
 func (r *Repository) TwoActionsWithInterval(actionID, actionID2, fromDate, toDate string) ([]model.DBResponse2Actions, error) {
 	var results []model.DBResponse2Actions
 

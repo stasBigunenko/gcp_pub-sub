@@ -6,16 +6,19 @@ import (
 	"time"
 )
 
+// ServiceProduct is the objest that define a business logic of the app
 type ServiceProduct struct {
 	repo repo.ProductsRepo
 }
 
+// New is the constructor of the ServiceProduct entity
 func New(r repo.ProductsRepo) *ServiceProduct {
 	return &ServiceProduct{
 		repo: r,
 	}
 }
 
+// CheckDate checks if the date is correct in the input and return it in the needed format
 func checkDate(input model.InputWithDate) (string, string, error) {
 	fromDate := input.FromDateYear + "-" + input.FromDateMonth + "-" + input.FromDateDay
 	checkFromDate, err := time.Parse("2006-01-02", fromDate)
@@ -32,6 +35,7 @@ func checkDate(input model.InputWithDate) (string, string, error) {
 	return checkFromDate.Format("2006-01-02"), checkToDate.Format("2006-01-02"), nil
 }
 
+// ActionWithInterval prepare data from the input to the needed format and send to the repositoriy
 func (s *ServiceProduct) ActionIDWithInterval(input model.InputWithDate) ([]model.DBResponse, error) {
 	fromDate, toDate, err := checkDate(input)
 	if err != nil {
@@ -46,6 +50,7 @@ func (s *ServiceProduct) ActionIDWithInterval(input model.InputWithDate) ([]mode
 	return result, nil
 }
 
+// ActionWithInterval prepare data from the input to the needed format and send to the repositoriy
 func (s *ServiceProduct) TwoActionsIDWithInterval(input model.InputWithDate) ([]model.DBResponse2Actions, error) {
 	fromDate, toDate, err := checkDate(input)
 	if err != nil {
