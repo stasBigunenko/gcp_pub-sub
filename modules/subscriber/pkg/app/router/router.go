@@ -10,11 +10,13 @@ import (
 	"time"
 )
 
+// Router is the object that represent HTTP API layer
 type Router struct {
 	serverPort *config.HTTPServerConfiguration
 	handler    handler.Handler
 }
 
+// New is a constructor of the Router entity
 func New(httpPort *config.HTTPServerConfiguration, event handler.Handler) *Router {
 	return &Router{
 		serverPort: httpPort,
@@ -22,6 +24,7 @@ func New(httpPort *config.HTTPServerConfiguration, event handler.Handler) *Route
 	}
 }
 
+// RunServer starts HTTP server
 func (r *Router) RunServer(ctx context.Context) {
 	engine := gin.Default()
 	r.assignRoutes(engine)
@@ -51,6 +54,7 @@ func (r *Router) RunServer(ctx context.Context) {
 	log.Println("Server exiting")
 }
 
+// AssignRoutes assign the available routes of the HTTP API
 func (r *Router) assignRoutes(engine *gin.Engine) {
 	engine.GET("/bucket", r.handler.ProductsInBucket)
 	engine.GET("/outofbucket", r.handler.ProductsOutFromBucket)

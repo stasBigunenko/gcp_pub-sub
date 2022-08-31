@@ -24,6 +24,14 @@ type DBResponse struct {
 	Category    string    `json:"category"`
 }
 
+type DBResponse2Actions struct {
+	ProductID   string  `json:"productID"`
+	Name        string  `json:"name"`
+	Description string  `json:"description"`
+	Price       float32 `json:"price"`
+	Category    string  `json:"category"`
+}
+
 type InputWithDate struct {
 	ActionID      string `json:"actionID"`
 	ActionID2     string `json:"actionID2"`

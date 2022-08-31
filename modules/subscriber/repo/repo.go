@@ -6,5 +6,5 @@ type ProductsRepo interface {
 	AddAction(string, string) error
 
 	ActionWithInterval(string, string, string) ([]model.DBResponse, error)
-	TwoActionsWithInterval(string, string, string, string) ([]model.DBResponse, error)
+	TwoActionsWithInterval(string, string, string, string) ([]model.DBResponse2Actions, error)
 }

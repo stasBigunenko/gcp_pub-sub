@@ -14,12 +14,14 @@ import (
 	"os"
 )
 
+// Application Config is the top-level configuration object.
 type Application struct {
 	Configuration *config.Configuration
 	Worker        *worker.Worker
 	Service       service.Service
 }
 
+// Create is a constructor (initialize) of the Application object
 func Create() (*Application, error) {
 	cfg, err := config.Set()
 	if err != nil {
@@ -50,6 +52,7 @@ func Create() (*Application, error) {
 	}, nil
 }
 
+// Run is the function that start application
 func (app *Application) Run(ctx context.Context) error {
 	app.Worker.Run(ctx)
 

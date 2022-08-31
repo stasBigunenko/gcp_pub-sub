@@ -6,27 +6,32 @@ import (
 )
 
 type (
+	// Configuration object is the main object
 	Configuration struct {
 		HTTPServerPort    HTTPServerConfiguration
 		PubSubData        PubSubConfiguration
 		StoragePostgreSQL StorageConfiguration
 	}
 
+	// HTTPServerConfiguration is the object that define http port configuration
 	HTTPServerConfiguration struct {
 		HTTPPort string
 	}
 
+	// PubSubConfiguration is the object that define configuration of the google pub-sub API config
 	PubSubConfiguration struct {
 		ProjectID    string
 		TopicID      string
 		SubscriberID string
 	}
 
+	// StorageConfiguration is the object that define db connection
 	StorageConfiguration struct {
 		ConnString string
 	}
 )
 
+// Set initialize environment variables if they didn't set
 func Set() (*Configuration, error) {
 	httpPort := os.Getenv("PORT")
 	if httpPort == "" {

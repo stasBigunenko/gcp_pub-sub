@@ -8,13 +8,14 @@ import (
 	"sync"
 )
 
+// PostgesDB is the object that define db connection
 type PostgresDB struct {
 	Pdb *sql.DB
 	mu  sync.Mutex
 }
 
+// New is the constructor that return PostgresDB entity and open db connection
 func New(connStr *config.StorageConfiguration) (*PostgresDB, error) {
-
 	db, err := sql.Open("postgres", connStr.ConnString)
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect database %w\n", err)
@@ -22,10 +23,10 @@ func New(connStr *config.StorageConfiguration) (*PostgresDB, error) {
 
 	database := &PostgresDB{Pdb: db}
 
+	database.Pdb.Exec(`DROP TABLE user_activities;`)
 	database.Pdb.Exec(`DROP TABLE products;`)
 	database.Pdb.Exec(`DROP TABLE categories;`)
 	database.Pdb.Exec(`DROP TABLE actions;`)
-	database.Pdb.Exec(`DROP TABLE user_activities CASCADE CONSTRAINTS;`)
 
 	database.Pdb.Exec(`CREATE TABLE products (
     					id CHAR(36) PRIMARY KEY NOT NULL, 
@@ -50,13 +51,14 @@ func New(connStr *config.StorageConfiguration) (*PostgresDB, error) {
     					action_id CHAR(36) NOT NULL,
     					product_id CHAR(36),
     					created_at TIMESTAMP,
-    					FOREIGN KEY (action_id) REFERENCES actions(id) ON DELETE CASCADE ON UPDATE CASCADE ,
+    					FOREIGN KEY (action_id) REFERENCES actions(id) ON DELETE CASCADE ON UPDATE CASCADE,
     					FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE ON UPDATE CASCADE                           
     				);`)
 
 	return database, nil
 }
 
+// AddSomeDataToDB adding some data to the db for testing
 func (db *PostgresDB) AddSomeDataToDB() error {
 	_, err := db.Pdb.Exec(`INSERT INTO products (id, name, description, price, category_id) VALUES ($1, $2, $3, $4, $5)`,
 		"00000000-0000-0000-0000-000000000001", "Shampoo", "Gel", 100.00, "00000000-0000-0000-1000-000000000000")
