@@ -27,7 +27,7 @@ func (p *Product) ProductsInBucket(c *gin.Context) {
 
 	products, err := p.service.ActionIDWithInterval(input)
 	if err != nil {
-		c.Error(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -44,7 +44,7 @@ func (p *Product) ProductsOutFromBucket(c *gin.Context) {
 
 	products, err := p.service.ActionIDWithInterval(input)
 	if err != nil {
-		c.Error(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -61,7 +61,7 @@ func (p *Product) ProductsDescription(c *gin.Context) {
 
 	products, err := p.service.ActionIDWithInterval(input)
 	if err != nil {
-		c.Error(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -78,7 +78,7 @@ func (p *Product) ProductsBucketAndDescription(c *gin.Context) {
 
 	products, err := p.service.TwoActionsIDWithInterval(input)
 	if err != nil {
-		c.Error(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 

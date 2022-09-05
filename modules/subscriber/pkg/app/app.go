@@ -36,7 +36,7 @@ func Create() (*Application, error) {
 	}
 
 	if err = storage.AddSomeDataToDB(); err != nil {
-		log.Fatalf("error adding data to db: %w\n", err)
+		log.Fatalf("error adding data to db: %v\n", err)
 	}
 
 	repo := repo.New(storage.Pdb)
