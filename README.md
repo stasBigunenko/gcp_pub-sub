@@ -35,7 +35,7 @@ Example of request:
     "toDateDay":"30"
 } 
 ```
-And the xample of response:
+And example of response:
 ```
 {"products":[{"actionID":"00000000-0000-1000-0000-000000000000","createdAt":"0001-01-01T00:00:00Z","productID":"00000000-0000-0000-0000-000000000001","name":"Shampoo","description":"Gel","price":100,"category":"00000000-0000-0000-1000-000000000000"}]}
 ```
