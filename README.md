@@ -41,5 +41,9 @@ And example of response:
 ```
 ## Getting started
 First, make sure you have docker and docker-compose installed on your system. After cloning this repo to run the product with default configuration, open the root folder in bash and type:
+
 ```docker-compose up --build```
-You can specify all the data of the services (ports, usernames, passwords etc) in ```docker-compose.yaml```
+
+You can specify all the data of the services (ports, usernames, passwords etc) in 
+
+```docker-compose.yaml```
