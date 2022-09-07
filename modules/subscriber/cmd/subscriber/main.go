@@ -16,7 +16,7 @@ func main() {
 	// read config
 	application, err := app.Create()
 	if err != nil {
-		log.Fatalf("app create internal problem: %w\n", err)
+		log.Fatalf("app create internal problem: %v\n", err)
 		os.Exit(1)
 	}
 
