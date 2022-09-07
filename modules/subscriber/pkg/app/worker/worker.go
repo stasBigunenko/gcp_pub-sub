@@ -23,7 +23,7 @@ type Worker struct {
 
 // init initialize Goggle app environment variable
 func init() {
-	os.Setenv("GOOGLE_APPLICATION_CREDENTIALS", "./pub-sub-359008-ff94c59da4aa.json")
+	os.Setenv("GOOGLE_APPLICATION_CREDENTIALS", "./pub-sub-46957-54560624752f.json")
 }
 
 // New is the contructor of the Worker entity

@@ -10,7 +10,7 @@ services:
       - "8080:8080"
     environment:
       PORT: ":8080"
-      PROJECT_ID: "pub-sub-359008"
+      PROJECT_ID: "pub-sub-46957"
       TOPIC_ID: "my-topic"
 
   subscriber:
@@ -22,7 +22,7 @@ services:
       - "8081:8081"
     environment:
       PORT: ":8081"
-      PROJECT_ID: "pub-sub-359008"
+      PROJECT_ID: "pub-sub-46957"
       TOPIC_ID: "my-topic"
       HOST_DB: "postgres"
       PORT_DB: "5432"

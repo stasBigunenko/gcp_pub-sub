@@ -13,7 +13,7 @@ import (
 )
 
 func init() {
-	os.Setenv("GOOGLE_APPLICATION_CREDENTIALS", "./pub-sub-359008-ff94c59da4aa.json")
+	os.Setenv("GOOGLE_APPLICATION_CREDENTIALS", "./pub-sub-46957-54560624752f.json")
 }
 
 type Event struct {

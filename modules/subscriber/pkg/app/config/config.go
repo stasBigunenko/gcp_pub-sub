@@ -42,7 +42,7 @@ func Set() (*Configuration, error) {
 
 	projectID := os.Getenv("PROJECT_ID")
 	if projectID == "" {
-		projectID = "pub-sub-359008"
+		projectID = "pub-sub-46957"
 	}
 
 	topicID := os.Getenv("TOPIC_ID")
