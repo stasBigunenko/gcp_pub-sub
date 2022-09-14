@@ -167,6 +167,28 @@ func TestServiceProduct_ActionIDWithInterval(t *testing.T) {
 				wantErr: `parsing time "22-08-25" as "2006-01-02": cannot parse "8-25" as "2006"`,
 			},
 		},
+		{
+			name: "Error validate input test",
+			fields: fields{
+				r: mockRepo{
+					mockActionWithInterval: func(actionID, fromDate, toDate string) ([]model.DBResponse, error) {
+						return []model.DBResponse{}, errors.New("db problem")
+					},
+				},
+			},
+			args: args{
+				input: model.InputWithDate{
+					ActionID:      "00000000-0000-1000-0000-0000000000011",
+					FromDateYear:  "2022",
+					FromDateMonth: "08",
+					FromDateDay:   "24",
+					ToDateYear:    "2022",
+					ToDateMonth:   "09",
+					ToDateDay:     "30"},
+				want:    []model.DBResponse{},
+				wantErr: `invalid input`,
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -304,6 +326,64 @@ func TestServiceProduct_TwoActionsIDWithInterval(t *testing.T) {
 					ToDateDay:     "25"},
 				want:    []model.DBResponse2Actions{},
 				wantErr: `parsing time "22-08-25" as "2006-01-02": cannot parse "8-25" as "2006"`,
+			},
+		},
+		{
+			name: "Correct test",
+			fields: fields{
+				r: mockRepo{
+					mockTwoActionsWithInterval: func(actionID, actionID2, fromDate, toDate string) ([]model.DBResponse2Actions, error) {
+						return []model.DBResponse2Actions{
+							{"00000000-0000-0000-0000-000000000001",
+								"Shampoo",
+								"Gel",
+								100,
+								"00000000-0000-0000-1000-000000000000"},
+						}, nil
+					},
+				},
+			},
+			args: args{
+				input: model.InputWithDate{
+					ActionID:      "00000000-0000-1000-0000-0000000000001",
+					ActionID2:     "00000000-0000-2000-0000-000000000000",
+					FromDateYear:  "2022",
+					FromDateMonth: "08",
+					FromDateDay:   "24",
+					ToDateYear:    "2022",
+					ToDateMonth:   "09",
+					ToDateDay:     "30"},
+				want:    []model.DBResponse2Actions{},
+				wantErr: "invalid input",
+			},
+		},
+		{
+			name: "Correct test",
+			fields: fields{
+				r: mockRepo{
+					mockTwoActionsWithInterval: func(actionID, actionID2, fromDate, toDate string) ([]model.DBResponse2Actions, error) {
+						return []model.DBResponse2Actions{
+							{"00000000-0000-0000-0000-000000000001",
+								"Shampoo",
+								"Gel",
+								100,
+								"00000000-0000-0000-1000-000000000000"},
+						}, nil
+					},
+				},
+			},
+			args: args{
+				input: model.InputWithDate{
+					ActionID:      "00000000-0000-1000-0000-000000000000",
+					ActionID2:     "00000000-0000-2000-0000-0000000000001",
+					FromDateYear:  "2022",
+					FromDateMonth: "08",
+					FromDateDay:   "24",
+					ToDateYear:    "2022",
+					ToDateMonth:   "09",
+					ToDateDay:     "30"},
+				want:    []model.DBResponse2Actions{},
+				wantErr: "invalid input",
 			},
 		},
 	}
