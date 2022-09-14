@@ -35,7 +35,6 @@ func TestProduct_ProductsInBucket(t *testing.T) {
 		s service.Service
 	}
 	type args struct {
-		input  model.InputWithDate
 		body   []byte
 		status int
 		want   []byte
@@ -63,14 +62,6 @@ func TestProduct_ProductsInBucket(t *testing.T) {
 				},
 			},
 			args: args{
-				input: model.InputWithDate{
-					ActionID:      "00000000-0000-1000-0000-000000000000",
-					FromDateYear:  "2022",
-					FromDateMonth: "08",
-					FromDateDay:   "24",
-					ToDateYear:    "2022",
-					ToDateMonth:   "09",
-					ToDateDay:     "30"},
 				body: []byte(`{
 						"actionID":"00000000-0000-1000-0000-000000000000",
     					"fromDateYear":"2022",
@@ -78,7 +69,7 @@ func TestProduct_ProductsInBucket(t *testing.T) {
     					"fromDateDay":"24",
     					"toDateYear":"2022",
     					"toDateMonth":"09",
-    					"toDateDay":"30""
+    					"toDateDay":"30"
 						}`),
 				want: []byte(
 					`{"products":[{"actionID":"00000000-0000-1000-0000-000000000000","createdAt":"0001-01-01T00:00:00Z","productID":"00000000-0000-0000-0000-000000000001","name":"Shampoo","description":"Gel","price":100,"category":"00000000-0000-0000-1000-000000000000"}]}`,
@@ -96,14 +87,6 @@ func TestProduct_ProductsInBucket(t *testing.T) {
 				},
 			},
 			args: args{
-				input: model.InputWithDate{
-					ActionID:      "00000000-0000-1000-0000-000000000000",
-					FromDateYear:  "2022",
-					FromDateMonth: "08",
-					FromDateDay:   "24",
-					ToDateYear:    "2022",
-					ToDateMonth:   "09",
-					ToDateDay:     "30"},
 				body: []byte(`{
 						"actionID":"00000000-0000-1000-0000-000000000000",
     					"fromDateYear":"2022",
@@ -111,10 +94,34 @@ func TestProduct_ProductsInBucket(t *testing.T) {
     					"fromDateDay":"24",
     					"toDateYear":"2022",
     					"toDateMonth":"09",
-    					"toDateDay":"30""
+    					"toDateDay":"30"
 						}`),
 				want: []byte(
 					`{"error":"service error"}`,
+				),
+				status: http.StatusBadRequest,
+			},
+		},
+		{
+			name: "json error test",
+			fields: fields{
+				s: mockService{
+					mockActionIDWithInterval: func(model.InputWithDate) ([]model.DBResponse, error) {
+						return []model.DBResponse{}, nil
+					},
+				},
+			},
+			args: args{
+				body: []byte(`{
+						"action":"00000000-0000-1000-0000-000000000000",
+    					"fromDateMonth":"08",
+    					"fromDateDay":"24",
+    					"toDateYear":"2022",
+    					"toDateMonth":"09",
+    					"toDateDay":"30""
+						}`),
+				want: []byte(
+					`{"error":"json error"}`,
 				),
 				status: http.StatusBadRequest,
 			},
@@ -131,14 +138,12 @@ func TestProduct_ProductsInBucket(t *testing.T) {
 			router := gin.Default()
 
 			router.Use(func(c *gin.Context) {
-				c.Set("input", tt.args.input)
+				c.Set("input", tt.args.body)
 			}).GET("/bucket", p.ProductsInBucket)
 
 			rr := httptest.NewRecorder()
 
-			reqBody, _ := json.Marshal(tt.args.input)
-
-			req, err := http.NewRequest("GET", "/bucket", bytes.NewBuffer(reqBody))
+			req, err := http.NewRequest("GET", "/bucket", bytes.NewBuffer(tt.args.body))
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -165,7 +170,6 @@ func TestProduct_ProductsOutFromBucket(t *testing.T) {
 		s service.Service
 	}
 	type args struct {
-		input  model.InputWithDate
 		body   []byte
 		status int
 		want   []byte
@@ -193,14 +197,6 @@ func TestProduct_ProductsOutFromBucket(t *testing.T) {
 				},
 			},
 			args: args{
-				input: model.InputWithDate{
-					ActionID:      "00000000-0000-1000-0000-000000000000",
-					FromDateYear:  "2022",
-					FromDateMonth: "08",
-					FromDateDay:   "24",
-					ToDateYear:    "2022",
-					ToDateMonth:   "09",
-					ToDateDay:     "30"},
 				body: []byte(`{
 						"actionID":"00000000-0000-1000-0000-000000000000",
     					"fromDateYear":"2022",
@@ -208,7 +204,7 @@ func TestProduct_ProductsOutFromBucket(t *testing.T) {
     					"fromDateDay":"24",
     					"toDateYear":"2022",
     					"toDateMonth":"09",
-    					"toDateDay":"30""
+    					"toDateDay":"30"
 						}`),
 				want: []byte(
 					`{"products":[{"actionID":"00000000-0000-1000-0000-000000000000","createdAt":"0001-01-01T00:00:00Z","productID":"00000000-0000-0000-0000-000000000001","name":"Shampoo","description":"Gel","price":100,"category":"00000000-0000-0000-1000-000000000000"}]}`,
@@ -226,14 +222,6 @@ func TestProduct_ProductsOutFromBucket(t *testing.T) {
 				},
 			},
 			args: args{
-				input: model.InputWithDate{
-					ActionID:      "00000000-0000-1000-0000-000000000000",
-					FromDateYear:  "2022",
-					FromDateMonth: "08",
-					FromDateDay:   "24",
-					ToDateYear:    "2022",
-					ToDateMonth:   "09",
-					ToDateDay:     "30"},
 				body: []byte(`{
 						"actionID":"00000000-0000-1000-0000-000000000000",
     					"fromDateYear":"2022",
@@ -241,10 +229,34 @@ func TestProduct_ProductsOutFromBucket(t *testing.T) {
     					"fromDateDay":"24",
     					"toDateYear":"2022",
     					"toDateMonth":"09",
-    					"toDateDay":"30""
+    					"toDateDay":"30"
 						}`),
 				want: []byte(
 					`{"error":"service error"}`,
+				),
+				status: http.StatusBadRequest,
+			},
+		},
+		{
+			name: "json error test",
+			fields: fields{
+				s: mockService{
+					mockActionIDWithInterval: func(model.InputWithDate) ([]model.DBResponse, error) {
+						return []model.DBResponse{}, nil
+					},
+				},
+			},
+			args: args{
+				body: []byte(`{
+						"action":"00000000-0000-1000-0000-000000000000",
+    					"fromDateMonth":"08",
+    					"fromDateDay":"24",
+    					"toDateYear":"2022",
+    					"toDateMonth":"09",
+    					"toDateDay":"30""
+						}`),
+				want: []byte(
+					`{"error":"json error"}`,
 				),
 				status: http.StatusBadRequest,
 			},
@@ -261,14 +273,12 @@ func TestProduct_ProductsOutFromBucket(t *testing.T) {
 			router := gin.Default()
 
 			router.Use(func(c *gin.Context) {
-				c.Set("input", tt.args.input)
+				c.Set("input", tt.args.body)
 			}).GET("/outofbucket", p.ProductsOutFromBucket)
 
 			rr := httptest.NewRecorder()
 
-			reqBody, _ := json.Marshal(tt.args.input)
-
-			req, err := http.NewRequest("GET", "/outofbucket", bytes.NewBuffer(reqBody))
+			req, err := http.NewRequest("GET", "/outofbucket", bytes.NewBuffer(tt.args.body))
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -295,7 +305,6 @@ func TestProduct_ProductsDescription(t *testing.T) {
 		s service.Service
 	}
 	type args struct {
-		input  model.InputWithDate
 		body   []byte
 		status int
 		want   []byte
@@ -323,14 +332,6 @@ func TestProduct_ProductsDescription(t *testing.T) {
 				},
 			},
 			args: args{
-				input: model.InputWithDate{
-					ActionID:      "00000000-0000-1000-0000-000000000000",
-					FromDateYear:  "2022",
-					FromDateMonth: "08",
-					FromDateDay:   "24",
-					ToDateYear:    "2022",
-					ToDateMonth:   "09",
-					ToDateDay:     "30"},
 				body: []byte(`{
 						"actionID":"00000000-0000-1000-0000-000000000000",
     					"fromDateYear":"2022",
@@ -338,7 +339,7 @@ func TestProduct_ProductsDescription(t *testing.T) {
     					"fromDateDay":"24",
     					"toDateYear":"2022",
     					"toDateMonth":"09",
-    					"toDateDay":"30""
+    					"toDateDay":"30"
 						}`),
 				want: []byte(
 					`{"products":[{"actionID":"00000000-0000-1000-0000-000000000000","createdAt":"0001-01-01T00:00:00Z","productID":"00000000-0000-0000-0000-000000000001","name":"Shampoo","description":"Gel","price":100,"category":"00000000-0000-0000-1000-000000000000"}]}`,
@@ -356,14 +357,6 @@ func TestProduct_ProductsDescription(t *testing.T) {
 				},
 			},
 			args: args{
-				input: model.InputWithDate{
-					ActionID:      "00000000-0000-1000-0000-000000000000",
-					FromDateYear:  "2022",
-					FromDateMonth: "08",
-					FromDateDay:   "24",
-					ToDateYear:    "2022",
-					ToDateMonth:   "09",
-					ToDateDay:     "30"},
 				body: []byte(`{
 						"actionID":"00000000-0000-1000-0000-000000000000",
     					"fromDateYear":"2022",
@@ -371,10 +364,34 @@ func TestProduct_ProductsDescription(t *testing.T) {
     					"fromDateDay":"24",
     					"toDateYear":"2022",
     					"toDateMonth":"09",
-    					"toDateDay":"30""
+    					"toDateDay":"30"
 						}`),
 				want: []byte(
 					`{"error":"service error"}`,
+				),
+				status: http.StatusBadRequest,
+			},
+		},
+		{
+			name: "json error test",
+			fields: fields{
+				s: mockService{
+					mockActionIDWithInterval: func(model.InputWithDate) ([]model.DBResponse, error) {
+						return []model.DBResponse{}, nil
+					},
+				},
+			},
+			args: args{
+				body: []byte(`{
+						"action":"00000000-0000-1000-0000-000000000000",
+    					"fromDateMonth":"08",
+    					"fromDateDay":"24",
+    					"toDateYear":"2022",
+    					"toDateMonth":"09",
+    					"toDateDay":"30""
+						}`),
+				want: []byte(
+					`{"error":"json error"}`,
 				),
 				status: http.StatusBadRequest,
 			},
@@ -391,14 +408,12 @@ func TestProduct_ProductsDescription(t *testing.T) {
 			router := gin.Default()
 
 			router.Use(func(c *gin.Context) {
-				c.Set("input", tt.args.input)
+				c.Set("input", tt.args.body)
 			}).GET("/description", p.ProductsDescription)
 
 			rr := httptest.NewRecorder()
 
-			reqBody, _ := json.Marshal(tt.args.input)
-
-			req, err := http.NewRequest("GET", "/description", bytes.NewBuffer(reqBody))
+			req, err := http.NewRequest("GET", "/description", bytes.NewBuffer(tt.args.body))
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -423,7 +438,6 @@ func TestProduct_ProductsBucketAndDescription(t *testing.T) {
 		s service.Service
 	}
 	type args struct {
-		input  model.InputWithDate
 		body   []byte
 		status int
 		want   []byte
@@ -449,15 +463,6 @@ func TestProduct_ProductsBucketAndDescription(t *testing.T) {
 				},
 			},
 			args: args{
-				input: model.InputWithDate{
-					ActionID:      "00000000-0000-1000-0000-000000000000",
-					ActionID2:     "00000000-0000-2000-0000-000000000000",
-					FromDateYear:  "2022",
-					FromDateMonth: "08",
-					FromDateDay:   "24",
-					ToDateYear:    "2022",
-					ToDateMonth:   "09",
-					ToDateDay:     "30"},
 				body: []byte(`{
 						"actionID":"00000000-0000-1000-0000-000000000000",
 						"actionID2":"00000000-0000-2000-0000-000000000000",
@@ -466,7 +471,7 @@ func TestProduct_ProductsBucketAndDescription(t *testing.T) {
     					"fromDateDay":"24",
     					"toDateYear":"2022",
     					"toDateMonth":"09",
-    					"toDateDay":"30""
+    					"toDateDay":"30"
 						}`),
 				want: []byte(
 					`{"products":[{"productID":"00000000-0000-0000-0000-000000000001","name":"Shampoo","description":"Gel","price":100,"category":"00000000-0000-0000-1000-000000000000"}]}`,
@@ -484,15 +489,32 @@ func TestProduct_ProductsBucketAndDescription(t *testing.T) {
 				},
 			},
 			args: args{
-				input: model.InputWithDate{
-					ActionID:      "00000000-0000-1000-0000-000000000000",
-					ActionID2:     "00000000-0000-2000-0000-000000000000",
-					FromDateYear:  "2022",
-					FromDateMonth: "08",
-					FromDateDay:   "24",
-					ToDateYear:    "2022",
-					ToDateMonth:   "09",
-					ToDateDay:     "30"},
+				body: []byte(`{
+						"actionID":"00000000-0000-1000-0000-000000000000",
+						"actionID2":"00000000-0000-2000-0000-000000000000"
+    					"fromDateYear":"2022",
+    					"fromDateMonth":"08",
+    					"fromDateDay":"24",
+    					"toDateYear":"2022",
+    					"toDateMonth":"09",
+    					"toDateDay":"30""
+						}`),
+				want: []byte(
+					`{"error":"service error"}`,
+				),
+				status: http.StatusBadRequest,
+			},
+		},
+		{
+			name: "service error test",
+			fields: fields{
+				s: mockService{
+					mockTwoActionsIDWithInterval: func(model.InputWithDate) ([]model.DBResponse2Actions, error) {
+						return []model.DBResponse2Actions{}, nil
+					},
+				},
+			},
+			args: args{
 				body: []byte(`{
 						"actionID":"00000000-0000-1000-0000-000000000000",
 						"actionID2":"00000000-0000-2000-0000-000000000000"
@@ -521,14 +543,12 @@ func TestProduct_ProductsBucketAndDescription(t *testing.T) {
 			router := gin.Default()
 
 			router.Use(func(c *gin.Context) {
-				c.Set("input", tt.args.input)
+				c.Set("input", tt.args.body)
 			}).GET("/descriptionandbucket", p.ProductsBucketAndDescription)
 
 			rr := httptest.NewRecorder()
 
-			reqBody, _ := json.Marshal(tt.args.input)
-
-			req, err := http.NewRequest("GET", "/descriptionandbucket", bytes.NewBuffer(reqBody))
+			req, err := http.NewRequest("GET", "/descriptionandbucket", bytes.NewBuffer(tt.args.body))
 			if err != nil {
 				t.Fatal(err)
 			}

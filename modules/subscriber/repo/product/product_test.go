@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func TestRepository_AddActiont(t *testing.T) {
+func TestRepository_AddAction(t *testing.T) {
 	db, mock, err := sqlmock.New(sqlmock.QueryMatcherOption(sqlmock.QueryMatcherEqual))
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection: %s", err, mock)
@@ -32,7 +32,7 @@ func TestRepository_AddActiont(t *testing.T) {
 
 }
 
-func TestRepository_AddAction(t *testing.T) {
+func TestRepository_ActionWithInterval(t *testing.T) {
 	db, mock, err := sqlmock.New(sqlmock.QueryMatcherOption(sqlmock.QueryMatcherEqual))
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection: %s", err, mock)
