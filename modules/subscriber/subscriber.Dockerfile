@@ -4,6 +4,9 @@ WORKDIR /subscriber
 
 COPY ./modules/subscriber/go.mod ./
 COPY ./modules/subscriber/go.sum ./
+
+ADD ./modules/subscriber/pkg/app/static ./data
+
 RUN go mod download
 
 COPY ./modules/subscriber ./

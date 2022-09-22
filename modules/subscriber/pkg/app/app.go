@@ -35,7 +35,15 @@ func Create() (*Application, error) {
 		os.Exit(1)
 	}
 
-	if err = storage.AddSomeDataToDB(); err != nil {
+	if err = storage.AddSomeDataIntoTable(cfg.StoragePostgreSQL.Table1.Name, cfg.StoragePostgreSQL.Table1.Path, cfg.StoragePostgreSQL.Table1.FieldsQty); err != nil {
+		log.Fatalf("error adding data to db: %v\n", err)
+	}
+
+	if err = storage.AddSomeDataIntoTable(cfg.StoragePostgreSQL.Table2.Name, cfg.StoragePostgreSQL.Table2.Path, cfg.StoragePostgreSQL.Table2.FieldsQty); err != nil {
+		log.Fatalf("error adding data to db: %v\n", err)
+	}
+
+	if err = storage.AddSomeDataIntoTable(cfg.StoragePostgreSQL.Table3.Name, cfg.StoragePostgreSQL.Table3.Path, cfg.StoragePostgreSQL.Table3.FieldsQty); err != nil {
 		log.Fatalf("error adding data to db: %v\n", err)
 	}
 

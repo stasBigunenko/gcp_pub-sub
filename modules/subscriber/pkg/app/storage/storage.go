@@ -1,5 +1,5 @@
 package storage
 
 type Storage interface {
-	AddSomeDataToDB() error
+	AddSomeDataIntoTable(string, string, int) error
 }

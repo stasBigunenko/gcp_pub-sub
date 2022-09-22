@@ -3,8 +3,13 @@ package postgresql
 import (
 	"Intern/gcp_pub-sub/modules/subscriber/pkg/app/config"
 	"database/sql"
+	"encoding/csv"
 	"fmt"
+	"github.com/google/uuid"
 	_ "github.com/lib/pq"
+	"io"
+	"log"
+	"os"
 	"sync"
 )
 
@@ -23,99 +28,75 @@ func New(connStr *config.StorageConfiguration) (*PostgresDB, error) {
 
 	database := &PostgresDB{Pdb: db}
 
-	database.Pdb.Exec(`DROP TABLE user_activities;`)
-	database.Pdb.Exec(`DROP TABLE products;`)
-	database.Pdb.Exec(`DROP TABLE categories;`)
-	database.Pdb.Exec(`DROP TABLE actions;`)
-
-	database.Pdb.Exec(`CREATE TABLE products (
-    					id CHAR(36) PRIMARY KEY NOT NULL, 
-    					name VARCHAR(50) NOT NULL, 
-    					description VARCHAR(500) NOT NULL,
-    					price FLOAT(8) NOT NULL,
-    					category_id CHAR(36) NOT NULL
-    				);`)
-
-	database.Pdb.Exec(`CREATE TABLE categories (
-    					id CHAR(36) PRIMARY KEY NOT NULL, 
-    					name VARCHAR(50) NOT NULL
-    				);`)
-
-	database.Pdb.Exec(`CREATE TABLE actions (
-    					id CHAR(36) PRIMARY KEY NOT NULL, 
-    					name VARCHAR(50) NOT NULL
-    				);`)
-
-	database.Pdb.Exec(`CREATE TABLE user_activities (
-    					id CHAR(36) PRIMARY KEY NOT NULL, 
-    					action_id CHAR(36) NOT NULL,
-    					product_id CHAR(36),
-    					created_at TIMESTAMP,
-    					FOREIGN KEY (action_id) REFERENCES actions(id) ON DELETE CASCADE ON UPDATE CASCADE,
-    					FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE ON UPDATE CASCADE                           
-    				);`)
-
 	return database, nil
 }
 
-// AddSomeDataToDB adding some data to the db for testing
-func (db *PostgresDB) AddSomeDataToDB() error {
-	_, err := db.Pdb.Exec(`INSERT INTO products (id, name, description, price, category_id) VALUES ($1, $2, $3, $4, $5)`,
-		"00000000-0000-0000-0000-000000000001", "Shampoo", "Gel", 100.00, "00000000-0000-0000-1000-000000000000")
+// AddSomeDataToProducts adding some data to the db in table products
+func (db *PostgresDB) AddSomeDataIntoTable(tableName, path string, fieldsQty int) error {
+	file, err := os.Open(path)
 	if err != nil {
-		return fmt.Errorf("db problems: %v\n", err)
+		return err
 	}
-	_, err = db.Pdb.Exec(`INSERT INTO products (id, name, description, price, category_id) VALUES ($1, $2, $3, $4, $5)`,
-		"00000000-0000-0000-0000-000000000002", "Soap", "Soft", 130.00, "00000000-0000-0000-1000-000000000000")
-	if err != nil {
-		return fmt.Errorf("db problems: %v\n", err)
-	}
-	_, err = db.Pdb.Exec(`INSERT INTO products (id, name, description, price, category_id) VALUES ($1, $2, $3, $4, $5)`,
-		"00000000-0000-0000-0000-000000000003", "Toothpaste", "Colgate", 15.50, "00000000-0000-0000-1000-000000000000")
-	if err != nil {
-		return fmt.Errorf("db problems: %v\n", err)
-	}
-	_, err = db.Pdb.Exec(`INSERT INTO products (id, name, description, price, category_id) VALUES ($1, $2, $3, $4, $5)`,
-		"00000000-0000-0000-0000-000000000004", "Wheel", "Round", 1500.00, "00000000-0000-0000-2000-000000000000")
-	if err != nil {
-		return fmt.Errorf("db problems: %v\n", err)
-	}
-	_, err = db.Pdb.Exec(`INSERT INTO products (id, name, description, price, category_id) VALUES ($1, $2, $3, $4, $5)`,
-		"00000000-0000-0000-0000-000000000005", "Car", "Big", 10000.00, "00000000-0000-0000-3000-000000000000")
-	if err != nil {
-		return fmt.Errorf("db problems: %v\n", err)
+	defer file.Close()
+
+	reader := csv.NewReader(file)
+
+	if _, err := reader.Read(); err == io.EOF {
+		return fmt.Errorf("error: empty file")
 	}
 
-	_, err = db.Pdb.Exec(`INSERT INTO categories (id, name) VALUES ($1, $2)`,
-		"00000000-0000-0000-1000-000000000000", "household chemicals")
-	if err != nil {
-		return fmt.Errorf("db problems: %v\n", err)
-	}
-	_, err = db.Pdb.Exec(`INSERT INTO categories (id, name) VALUES ($1, $2)`,
-		"00000000-0000-0000-2000-000000000000", "Wheels")
-	if err != nil {
-		return fmt.Errorf("db problems: %v\n", err)
-	}
-	_, err = db.Pdb.Exec(`INSERT INTO categories (id, name) VALUES ($1, $2)`,
-		"00000000-0000-0000-3000-000000000000", "Cars")
-	if err != nil {
-		return fmt.Errorf("db problems: %v\n", err)
-	}
+	//loop of reading
+	for i := 0; ; i++ {
+		record, err := reader.Read()
+		if err != nil {
+			if err != io.EOF {
+				return fmt.Errorf("Error reading file: %w", err)
+			}
+			if i == 0 {
+				return fmt.Errorf("Malformed csv file: there's only headers and no values")
+			} else {
+				log.Print("end of file")
+				//end of the file
+				return nil
+			}
+		}
 
-	_, err = db.Pdb.Exec(`INSERT INTO actions (id, name) VALUES ($1, $2)`,
-		"00000000-0000-1000-0000-000000000000", "Put in the bucket")
-	if err != nil {
-		return fmt.Errorf("db problems: %v\n", err)
-	}
-	_, err = db.Pdb.Exec(`INSERT INTO actions (id, name) VALUES ($1, $2)`,
-		"00000000-0000-2000-0000-000000000000", "Take off from the bucket")
-	if err != nil {
-		return fmt.Errorf("db problems: %v\n", err)
-	}
-	_, err = db.Pdb.Exec(`INSERT INTO actions (id, name) VALUES ($1, $2)`,
-		"00000000-0000-3000-0000-000000000000", "Looked description")
-	if err != nil {
-		return fmt.Errorf("db problems: %v\n", err)
+		//malformed csv handling
+		if len(record) != fieldsQty {
+			return fmt.Errorf("Malformed csv file: wrong number of fields")
+		}
+		for _, v := range record {
+			if v == "" {
+				return fmt.Errorf("malformed csv file: empty fields")
+			}
+		}
+		_, err = uuid.Parse(record[0])
+		if err != nil {
+			return fmt.Errorf("malformed id, should be a uuid: %w", err)
+		}
+
+		switch tableName {
+		case "products":
+			_, err = db.Pdb.Exec(`INSERT INTO products (id, name, description, price, category_id) VALUES ($1, $2, $3, $4, $5)`,
+				record[0], record[1], record[2], record[3], record[4])
+			if err != nil {
+				return fmt.Errorf("internal db problems: %w", err)
+			}
+		case "categories":
+			_, err = db.Pdb.Exec(`INSERT INTO categories (id, name) VALUES ($1, $2)`,
+				record[0], record[1])
+			if err != nil {
+				return fmt.Errorf("internal db problems: %w", err)
+			}
+		case "actions":
+			_, err = db.Pdb.Exec(`INSERT INTO actions (id, name) VALUES ($1, $2)`,
+				record[0], record[1])
+			if err != nil {
+				return fmt.Errorf("internal db problems: %w", err)
+			}
+		default:
+			return fmt.Errorf("cannot find such table")
+		}
 	}
 
 	return nil
