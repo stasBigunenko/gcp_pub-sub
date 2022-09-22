@@ -28,7 +28,30 @@ type (
 	// StorageConfiguration is the object that define db connection
 	StorageConfiguration struct {
 		ConnString string
+		Table1     Table
+		Table2     Table
+		Table3     Table
 	}
+
+	Table struct {
+		Name      string
+		Path      string
+		FieldsQty int
+	}
+)
+
+const (
+	TABLE1_NAME = "products"
+	PATH1       = "./data/products.csv"
+	FIELDS1Qty  = 5
+
+	TABLE2_NAME = "categories"
+	PATH2       = "./data/categories.csv"
+	FIELDS2Qty  = 2
+
+	TABLE3_NAME = "actions"
+	PATH3       = "./data/categories.csv"
+	FIELDS3Qty  = 2
 )
 
 // Set initialize environment variables if they didn't set
@@ -91,7 +114,11 @@ func Set() (*Configuration, error) {
 
 	connStr := "host=" + hostDB + " port=" + portDB + " user=" + userDB + " password=" + pswDB + " dbname=" + nameDB + " sslmode=" + ssldb
 
-	storage := StorageConfiguration{connStr}
+	table1 := Table{TABLE1_NAME, PATH1, FIELDS1Qty}
+	table2 := Table{TABLE2_NAME, PATH2, FIELDS2Qty}
+	table3 := Table{TABLE3_NAME, PATH3, FIELDS3Qty}
+
+	storage := StorageConfiguration{connStr, table1, table2, table3}
 
 	return &Configuration{
 			HTTPServerPort:    httpServer,
