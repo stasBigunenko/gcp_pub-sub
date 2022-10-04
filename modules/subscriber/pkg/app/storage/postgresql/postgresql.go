@@ -4,6 +4,7 @@ import (
 	"Intern/gcp_pub-sub/modules/subscriber/pkg/app/config"
 	"database/sql"
 	"encoding/csv"
+	"errors"
 	"fmt"
 	"github.com/google/uuid"
 	_ "github.com/lib/pq"
@@ -31,7 +32,7 @@ func New(connStr *config.StorageConfiguration) (*PostgresDB, error) {
 	return database, nil
 }
 
-// AddSomeDataToProducts adding some data to the db in table products
+// AddSomeDataIntoTable adding some data to the db in table products
 func (db *PostgresDB) AddSomeDataIntoTable(tableName, path string, fieldsQty int) error {
 	file, err := os.Open(path)
 	if err != nil {
@@ -77,18 +78,39 @@ func (db *PostgresDB) AddSomeDataIntoTable(tableName, path string, fieldsQty int
 
 		switch tableName {
 		case "products":
+			res, err := exists(tableName, record[0], db.Pdb)
+			if err != nil {
+				return fmt.Errorf("failed to connect database %w\n", err)
+			}
+			if res {
+				break
+			}
 			_, err = db.Pdb.Exec(`INSERT INTO products (id, name, description, price, category_id) VALUES ($1, $2, $3, $4, $5)`,
 				record[0], record[1], record[2], record[3], record[4])
 			if err != nil {
 				return fmt.Errorf("internal db problems: %w", err)
 			}
 		case "categories":
+			res, err := exists(tableName, record[0], db.Pdb)
+			if err != nil {
+				return fmt.Errorf("failed to connect database %w\n", err)
+			}
+			if res {
+				break
+			}
 			_, err = db.Pdb.Exec(`INSERT INTO categories (id, name) VALUES ($1, $2)`,
 				record[0], record[1])
 			if err != nil {
 				return fmt.Errorf("internal db problems: %w", err)
 			}
 		case "actions":
+			res, err := exists(tableName, record[0], db.Pdb)
+			if err != nil {
+				return fmt.Errorf("failed to connect database %w\n", err)
+			}
+			if res {
+				break
+			}
 			_, err = db.Pdb.Exec(`INSERT INTO actions (id, name) VALUES ($1, $2)`,
 				record[0], record[1])
 			if err != nil {
@@ -100,4 +122,19 @@ func (db *PostgresDB) AddSomeDataIntoTable(tableName, path string, fieldsQty int
 	}
 
 	return nil
+}
+
+func exists(tableName, id string, db *sql.DB) (bool, error) {
+	var data string
+
+	err := db.QueryRow(fmt.Sprintf(`SELECT 1 FROM %s WHERE id = $1;`, tableName), id).Scan(&data)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return false, nil
+		} else {
+			return false, err
+		}
+	}
+
+	return true, nil
 }

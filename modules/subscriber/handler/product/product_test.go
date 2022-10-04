@@ -491,13 +491,13 @@ func TestProduct_ProductsBucketAndDescription(t *testing.T) {
 			args: args{
 				body: []byte(`{
 						"actionID":"00000000-0000-1000-0000-000000000000",
-						"actionID2":"00000000-0000-2000-0000-000000000000"
+						"actionID2":"00000000-0000-2000-0000-000000000000",
     					"fromDateYear":"2022",
     					"fromDateMonth":"08",
     					"fromDateDay":"24",
     					"toDateYear":"2022",
     					"toDateMonth":"09",
-    					"toDateDay":"30""
+    					"toDateDay":"30"
 						}`),
 				want: []byte(
 					`{"error":"service error"}`,
@@ -506,7 +506,7 @@ func TestProduct_ProductsBucketAndDescription(t *testing.T) {
 			},
 		},
 		{
-			name: "service error test",
+			name: "json error test",
 			fields: fields{
 				s: mockService{
 					mockTwoActionsIDWithInterval: func(model.InputWithDate) ([]model.DBResponse2Actions, error) {
@@ -526,7 +526,7 @@ func TestProduct_ProductsBucketAndDescription(t *testing.T) {
     					"toDateDay":"30""
 						}`),
 				want: []byte(
-					`{"error":"service error"}`,
+					`{"error":"json error"}`,
 				),
 				status: http.StatusBadRequest,
 			},
